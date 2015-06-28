@@ -19,7 +19,10 @@ function preprocess(src) -- Takes src in string form, returns a table, the prepr
 	end):gsub("\nattributes #(%d+) = {(.-)}", function(number, attr)
 		local vals = {}
 		local attr = " "..attr.." "
-		attr:gsub('("(.-)"="(.-)")', function(_, name, val)
+		attr:gsub('("(.-)")', function(_, name)
+			vals[name] = true
+			return ""
+		end):gsub('("(.-)"="(.-)")', function(_, name, val)
 			local value = val
 			if val == "true" then
 				value = true
@@ -27,9 +30,6 @@ function preprocess(src) -- Takes src in string form, returns a table, the prepr
 				value = false
 			end
 			vals[name] = value
-			return ""
-		end):gsub('("(.-)")', function(_, name)
-			vals[name] = true
 			return ""
 		end):gsub(' (.-) ', function(name)
 			vals[name] = true
