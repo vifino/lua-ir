@@ -25,6 +25,6 @@ attributes #1 = { "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "n
 serialization = require("serialization")
 preprocessor = loadfile("../src/preprocessor.lua")()
 data = preprocessor(src)
-print(data.src)
+--print(data.src)
 
 print(serialization.serialize(data, 100000))
