@@ -13,13 +13,13 @@ function preprocess(src) -- Takes src in string form, returns a table, the prepr
 	local newsrc = string.gsub("\n"..tostring(src), "(\n; ModuleID = '(.-)')", function(_,module) -- ModuleID
 		info.moduleid = module
 		return ""
-	end):gsub("(\ntarget (.-) = \"(.-)\")", function(_, name, val) -- target triple/datalayout
+	end):gsub("\ntarget (.-) = \"(.-)\"", function(name, val) -- target triple/datalayout
 		info[name] = val
 		return ""
 	end):gsub("\nattributes #(%d+) = {(.-)}", function(number, attr)
 		local vals = {}
 		local attr = " "..attr.." "
-		attr:gsub('("(.-)"="(.-)")', function(_, name, val)
+		attr:gsub('"(%g-)"="(.-)"', function(name, val)
 			local value = val
 			if val == "true" then
 				value = true
@@ -28,11 +28,13 @@ function preprocess(src) -- Takes src in string form, returns a table, the prepr
 			end
 			vals[name] = value
 			return ""
-		end):gsub('("(.-)")', function(_, name)
+		end):gsub('"(%S-)"', function(name)
 			vals[name] = true
 			return ""
-		end):gsub(' (.-) ', function(name)
-			vals[name] = true
+		end):gsub('(%S+)', function(name)
+			if name ~= "" then
+				vals[name] = true
+			end
 		end)
 		attributes[tostring(number)] = vals
 		return ""
